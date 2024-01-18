@@ -6,6 +6,7 @@ interface Product {
   id: number;
   nome: string;
   isEditing: boolean;
+  isDone: boolean;
 }
 
 export default function Home() {
@@ -15,10 +16,10 @@ export default function Home() {
 
   async function loadItems() {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     try {
-      const response = await api.get("/produtos");
+      const response = await api.get("/products");
       setItems(response.data);
       console.log("Success:", response);
     } catch (error) {
@@ -38,7 +39,7 @@ export default function Home() {
     const data: Omit<Product, "id"> = { nome: textInput, isEditing: false };
 
     try {
-      const response = await api.post("/produtos", data);
+      const response = await api.post("/products", data);
       loadItems();
       console.log("Success:", response);
     } catch (error) {
@@ -50,7 +51,7 @@ export default function Home() {
     console.log(itemId);
 
     try {
-      await api.delete(`/produtos/${itemId}`);
+      await api.delete(`/products/${itemId}`);
 
       const filteredItems = items.filter((item) => item.id !== itemId);
       setItems(filteredItems);
@@ -73,7 +74,7 @@ export default function Home() {
     });
 
     setItems(result);
-    if (!tempItem.isEditing) await api.put(`/produtos/${itemId}`, tempItem);
+    if (!tempItem.isEditing) await api.put(`/products/${itemId}`, tempItem);
   }
 
   function handleChangeItem(itemId: number, textValue: string) {
@@ -89,17 +90,17 @@ export default function Home() {
 
   return (
     <main>
-      <div style={{ marginBottom: 10 }}>
+      <div style={{ display: "flex", gap: "5px" }}>
         <input
           onChange={(e) => setTextInput(e.target.value)}
-          placeholder="Digite o seu texto aqui..."
+          placeholder="Adicionar tarefa"
         />
-        <button onClick={handleAddItem}>Enviar</button>
+        <button onClick={handleAddItem}>Adicionar</button>
       </div>
 
       {loading && <p>Carregando...</p>}
 
-      <ul>
+      <ul className="flex">
         {items.map((item) => (
           <li key={item.id}>
             {item.isEditing ? (
@@ -112,7 +113,7 @@ export default function Home() {
             )}
 
             <button onClick={() => handleEditItem(item.id)}>
-              {item.isEditing ? "Save" : "Edit"}
+              {item.isEditing ? "Salvar" : "Editar"}
             </button>
             <button onClick={() => handleDeleteItem(item.id)}>Deletar</button>
           </li>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: "https://my-json-server.typicode.com/augustocesarfmo/crud-rest-web",
   timeout: 1000,
 });

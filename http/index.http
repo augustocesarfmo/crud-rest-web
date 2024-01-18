@@ -1,0 +1,34 @@
+@base_url = https://my-json-server.typicode.com/augustocesarfmo/crud-rest-web
+
+// Listando os registros
+GET {{base_url}}/produtos
+
+###
+
+// Recuperando um registro específico
+GET {{base_url}}/produtos/1
+
+###
+
+// Criando um novo registro
+POST {{base_url}}:3000/produtos
+content-type: application/json
+
+{
+  "nome": "Melancia"
+}
+
+###
+
+// Atualizando um registro
+PUT {{base_url}}/produtos/173
+content-type: application/json
+
+{
+  "nome": "Recife/PE"
+}
+
+###
+
+// Deletando um registro
+DELETE {{base_url}}/produtos/172
