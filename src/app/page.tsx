@@ -4,7 +4,7 @@ import { api } from "../../services/api";
 
 interface Product {
   id: number;
-  nome: string;
+  text: string;
   isEditing: boolean;
   isDone: boolean;
 }
@@ -30,13 +30,16 @@ export default function Home() {
     }
   }
 
-  // Quando a tela for carregada, execute.
   useEffect(() => {
     loadItems();
   }, []);
 
   async function handleAddItem() {
-    const data: Omit<Product, "id"> = { nome: textInput, isEditing: false };
+    const data: Omit<Product, "id"> = {
+      text: textInput,
+      isEditing: false,
+      isDone: false,
+    };
 
     try {
       const response = await api.post("/products", data);
@@ -47,45 +50,26 @@ export default function Home() {
     }
   }
 
-  async function handleDeleteItem(itemId: number) {
-    console.log(itemId);
+  function handleChangeItem(product: Product) {
+    const result = items.map((item) => {
+      if (item.id === product.id) {
+        return product;
+      }
+      return item;
+    });
 
+    setItems(result);
+  }
+
+  async function handleDeleteItem(product: Product) {
     try {
-      await api.delete(`/products/${itemId}`);
+      await api.delete(`/products/${product.id}`);
 
-      const filteredItems = items.filter((item) => item.id !== itemId);
+      const filteredItems = items.filter((item) => item.id !== product.id);
       setItems(filteredItems);
     } catch (error) {
       console.log("Error:", error);
     }
-  }
-
-  async function handleEditItem(itemId: number) {
-    let tempItem: any;
-
-    const result = items.map((item) => {
-      if (item.id === itemId) {
-        const updatedItem = { ...item, isEditing: !item.isEditing };
-        tempItem = updatedItem;
-
-        return updatedItem;
-      }
-      return item;
-    });
-
-    setItems(result);
-    if (!tempItem.isEditing) await api.put(`/products/${itemId}`, tempItem);
-  }
-
-  function handleChangeItem(itemId: number, textValue: string) {
-    const result = items.map((item) => {
-      if (item.id === itemId) {
-        return { ...item, nome: textValue };
-      }
-      return item;
-    });
-
-    setItems(result);
   }
 
   return (
@@ -105,17 +89,21 @@ export default function Home() {
           <li key={item.id}>
             {item.isEditing ? (
               <input
-                value={item.nome}
-                onChange={(e) => handleChangeItem(item.id, e.target.value)}
+                value={item.text}
+                onChange={(e) =>
+                  handleChangeItem({ ...item, text: e.target.value })
+                }
               />
             ) : (
-              item.nome
+              item.text
             )}
 
-            <button onClick={() => handleEditItem(item.id)}>
+            <button
+              onClick={() => handleChangeItem({ ...item, isEditing: true })}
+            >
               {item.isEditing ? "Salvar" : "Editar"}
             </button>
-            <button onClick={() => handleDeleteItem(item.id)}>Deletar</button>
+            <button onClick={() => handleDeleteItem(item)}>Deletar</button>
           </li>
         ))}
       </ul>
