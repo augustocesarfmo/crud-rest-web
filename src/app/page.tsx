@@ -49,15 +49,20 @@ export default function Home() {
     }
   }
 
-  function handleChangeItem(product: Product) {
-    const result = items.map((item) => {
-      if (item.id === product.id) {
-        return product;
-      }
-      return item;
-    });
+  async function handleChangeItem(product: Product) {
+    try {
+      await api.put(`/products/${product.id}`, product);
 
-    setItems(result);
+      const result = items.map((item) => {
+        if (item.id === product.id) {
+          return product;
+        }
+        return item;
+      });
+      setItems(result);
+    } catch (error) {
+      console.log("Error:", error);
+    }
   }
 
   async function handleDeleteItem(product: Product) {
