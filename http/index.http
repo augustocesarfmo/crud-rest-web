@@ -11,7 +11,7 @@ GET {{base_url}}/products/1
 ###
 
 // Criando um novo registro
-POST {{base_url}}:3000/products
+POST {{base_url}}/products
 content-type: application/json
 
 {
