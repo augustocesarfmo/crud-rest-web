@@ -21,7 +21,6 @@ export default function Home() {
     try {
       const response = await api.get("/products");
       setItems(response.data);
-      console.log("Success:", response);
     } catch (error) {
       console.log("Error:", error);
       alert("Ocorreu um erro ao tentar se conectar com o servidor.");
@@ -35,16 +34,16 @@ export default function Home() {
   }, []);
 
   async function handleAddItem() {
-    const data: Omit<Product, "id"> = {
+    const data: Product = {
+      id: items.length + 1,
       text: textInput,
       isEditing: false,
       isDone: false,
     };
 
     try {
-      const response = await api.post("/products", data);
-      loadItems();
-      console.log("Success:", response);
+      await api.post("/products", data);
+      setItems([...items, data]);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -74,6 +73,7 @@ export default function Home() {
 
   return (
     <main>
+      <h2>Lista de tarefas</h2>
       <div style={{ display: "flex", gap: "5px" }}>
         <input
           onChange={(e) => setTextInput(e.target.value)}
@@ -87,6 +87,13 @@ export default function Home() {
       <ul className="flex">
         {items.map((item) => (
           <li key={item.id}>
+            <input
+              type="checkbox"
+              checked={item.isDone}
+              onChange={() =>
+                handleChangeItem({ ...item, isDone: !item.isDone })
+              }
+            />
             {item.isEditing ? (
               <input
                 value={item.text}
@@ -95,11 +102,19 @@ export default function Home() {
                 }
               />
             ) : (
-              item.text
+              <span
+                style={{
+                  textDecoration: `${item.isDone ? "line-through" : "none"}`,
+                }}
+              >
+                {item.text}
+              </span>
             )}
 
             <button
-              onClick={() => handleChangeItem({ ...item, isEditing: true })}
+              onClick={() =>
+                handleChangeItem({ ...item, isEditing: !item.isEditing })
+              }
             >
               {item.isEditing ? "Salvar" : "Editar"}
             </button>
