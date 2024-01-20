@@ -29,6 +29,9 @@ $ git clone https://github.com/augustocesarfmo/crud-rest-web.git
 # Acessando o repositório
 $ cd crud-rest-web
 
+# Instalando as dependências
+$ npm install
+
 # Executando o app
 $ npm run dev
 ```
